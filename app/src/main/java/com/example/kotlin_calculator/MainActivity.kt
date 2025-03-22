@@ -7,17 +7,22 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import kotlinx.android.synthetic.main.activity_main.resultsTV
-import kotlinx.android.synthetic.main.activity_main.workingsTV
+import com.example.kotlin_calculator.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityMainBinding
+
     private var canAddOperation = false
     private var canAddDecimal = true
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
+//        setContentView(R.layout.activity_main)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -29,10 +34,10 @@ class MainActivity : AppCompatActivity() {
         if (view is Button) {
             if (view.text == ".") {
                 if (canAddDecimal)
-                    workingsTV.append(view.text)
+                    binding.workingsTV.append(view.text)
                 canAddDecimal = false
             } else
-                workingsTV.append(view.text)
+                binding.workingsTV.append(view.text)
 
             canAddOperation = true
         }
@@ -40,25 +45,25 @@ class MainActivity : AppCompatActivity() {
 
     fun operatorAction(view: View) {
         if (view is Button && canAddOperation){
-            workingsTV.append(view.text)
+            binding.workingsTV.append(view.text)
             canAddOperation = false
             canAddDecimal = true
         }
     }
 
     fun allClearAction(view: View) {
-        workingsTV.text = ""
-        resultsTV.text = ""
+        binding.workingsTV.text = ""
+        binding.resultsTV.text = ""
     }
 
     fun clearAction(view: View) {
-        val length = workingsTV.length()
+        val length = binding.workingsTV.length()
         if (length > 0)
-            workingsTV.text = workingsTV.text.subSequence(0, length - 1)
+            binding.workingsTV.text = binding.workingsTV.text.subSequence(0, length - 1)
     }
 
     fun equalsAction(view: View) {
-        resultsTV.text = calculateResults()
+        binding.resultsTV.text = calculateResults()
     }
 
     private fun calculateResults(): String{
@@ -131,7 +136,7 @@ class MainActivity : AppCompatActivity() {
         val list = mutableListOf<Any>()
         var currentDigit = ""
 
-        for (character in workingsTV.text){
+        for (character in binding.workingsTV.text){
             if (character.isDigit() || character == '.'){
                 currentDigit += character
             } else {
